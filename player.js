@@ -59,7 +59,7 @@ function initializePlayer(client) {
                 name: '지금 재생중',
                 iconURL: config.MusicIcon
             })
-            .setDescription('🎶 **철수 플레이어:**\n 🔁 `반복`, ❌ `반복취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `대기열정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
+            .setDescription('🎶 **철수 플레이어:**\n 🔁 `반복`, ❌ `취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `대기열 정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
             .setImage('attachment://musicard.png')
             .setColor(config.embedColor);
 
@@ -387,4 +387,3 @@ function initializePlayer(client) {
 }
 
 module.exports = { initializePlayer };
-
