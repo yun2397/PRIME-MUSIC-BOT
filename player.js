@@ -54,12 +54,12 @@ function initializePlayer(client) {
         const buffer = await card.build();
         const attachment = new AttachmentBuilder(buffer, { name: `musicard.png` });
 
-    const embed = new EmbedBuilder()
-        .setAuthor({
-            name: '지금 재생중',
-            iconURL: config.MusicIcon
-        })
-            .setDescription('🎶 **철수 플레이어:**\n 🔁 `반복` ❌ `취소` ⏭️ `스킵` 📜 `대기열` 🗑️ `대기열 정리`\n ⏹️ `정지` ⏸️ `일시정지` ▶️ `재생` 🔊 `볼륨 +` 🔉 `볼륨 -`')
+        const embed = new EmbedBuilder()
+            .setAuthor({
+                name: '지금 재생중이에요..!',
+                iconURL: config.MusicIcon
+            })
+            .setDescription('🎶 철수 플레이어:\n 🔁 `반복`, ❌ `취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `대기열 정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
             .setImage('attachment://musicard.png')
             .setColor(config.embedColor);
 
