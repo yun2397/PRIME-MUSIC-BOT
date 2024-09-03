@@ -11,8 +11,8 @@ async function lyrics(client, interaction) {
         if (!player) {
             const errorEmbed = new EmbedBuilder()
                 .setColor('#ff0000')
-                .setTitle('Error')
-                .setDescription('❌ No active player found.');
+                .setTitle('에러')
+                .setDescription('❌ 활성화된 플레이어를 찾을 수 없습니다.');
 
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
             return;
@@ -77,12 +77,12 @@ async function lyrics(client, interaction) {
                     });
             }
         } catch (err) {
-            lyricEmbed.setDescription(`❌ No lyrics were found!`);
+            lyricEmbed.setDescription(`❌ 가사를 찾을 수 없어요!`);
             return interaction.editReply({ embeds: [lyricEmbed], ephemeral: true });
         }
 
         if (!lyricSong) {
-            lyricEmbed.setDescription(`❌ No lyrics were found!`);
+            lyricEmbed.setDescription(`❌ 가사를 찾을 수 없어요!`);
             return interaction.editReply({ embeds: [lyricEmbed], ephemeral: true });
         }
 
@@ -163,11 +163,11 @@ async function lyrics(client, interaction) {
 
 module.exports = {
     name: "lyrics",
-    description: "Displays the lyrics of the current song",
+    description: "이 노래의 가사를 보여줄게요!",
     permissions: "0x0000000000000800",
     options: [{
         name: 'search',
-        description: 'Search query for lyrics',
+        description: '가사를 검색할 노래 제목이나 가수 이름 을 적어줘요!',
         type: ApplicationCommandOptionType.String,
         required: false
     }],
