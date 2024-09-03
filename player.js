@@ -60,7 +60,7 @@ function initializePlayer(client) {
                 iconURL: config.MusicIcon
             })
             .setDescription('🎶 **철수 플레이어:**\n 🔁 `반복`, ❌ `취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `대기열 정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
-            .setImage('attachment://musicard.png')
+            .setImage('https://discord.com/channels/973537588633817138/1041218377726832691/1280618872604459119')
             .setColor(config.embedColor);
 
         const actionRow1 = createActionRow1(false);
