@@ -43,21 +43,11 @@ client.riffy.on("trackStart", async (player, track) => {
     const trackUri = track.info.uri;
     const requester = requesters.get(trackUri);
 
-    const message = `**Now Playing:**\n` +
-                    `**Title:** ${track.info.title}\n` +
-                    `**Author:** ${track.info.author}\n` +
-                    `**Requester:** ${requester}\n` +
-                    `**Thumbnail:** ${track.info.thumbnail}`;
-
-    // 텍스트 메시지 전송
-    channel.send(message);
-});
-
-        const embed = new EmbedBuilder()
-            .setAuthor({
-                name: '지금 재생중',
-                iconURL: config.MusicIcon
-            })
+    const embed = new EmbedBuilder()
+        .setAuthor({
+            name: '지금 재생중',
+            iconURL: config.MusicIcon
+        })
             .setDescription('🎶 **철수 플레이어:**\n 🔁 `반복` ❌ `취소` ⏭️ `스킵` 📜 `대기열` 🗑️ `대기열 정리`\n ⏹️ `정지` ⏸️ `일시정지` ▶️ `재생` 🔊 `볼륨 +` 🔉 `볼륨 -`')
             .setImage('https://cdn.discordapp.com/attachments/1041218377726832691/1280618872231170150/5e859ac6a648095e4175d03954f83454035.png?ex=66d8bcc3&is=66d76b43&hm=8bce00ef5627940f2d87fdf0dea607ae63a06a36b3b9c2b3b73fc66f70afd220&')
             .setColor(config.embedColor);
