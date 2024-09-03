@@ -24,7 +24,7 @@ const config = require("../config.js");
 
 module.exports = {
   name: "help",
-  description: "Get information about the bot",
+  description: "철수의 사용법을 보여줘요",
   permissions: "0x0000000000000800",
   options: [],
   run: async (client, interaction) => {
@@ -37,17 +37,17 @@ Welcome to ${botName}!
 
 Your ultimate music companion on Discord. Here are the available commands:
 
-[ /play    ] - 노래를 재생할게요!
-[ /pause   ] - 현재 노래를 잠깐 멈출게요!
-[ /resume  ] - 멈춘 노래를 다시 재생할게요!
-[ /lyrics  ] - 노래 가사를 보여줄게요!
-[ /skip    ] - 다음 노래로 넘어갈게요!
-[ /stop    ] - 음악 플레이어를 종료할게요!
-[ /np      ] - 지금 재생 중인 노래를 보여줄게요!
-[ /volume  ] - 음악 소리를 조절할게요!
-[ /ping    ] - 봇의 반응 속도를 체크할게요!
-[ /support ] - 서포트 서버 정보를 보여줄게요!
-[ /help    ] - 도움말 메뉴를 보여줄게요!
+[ /play    ] - 노래를 재생해요
+[ /pause   ] - 현재 노래를 잠깐 멈춰요
+[ /resume  ] - 멈춘 노래를 다시 재생해요
+[ /lyrics  ] - 노래 가사를 보여줘요
+[ /skip    ] - 다음 노래로 넘어가요
+[ /stop    ] - 철수를 종료해요
+[ /np      ] - 지금 재생 중인 노래를 보여줘요
+[ /volume  ] - 철수 소리를 조절해요
+[ /ping    ] - 철수의 반응 속도를 체크해요
+[ /support ] - 서포트 서버 정보를 보여줘요
+[ /help    ] - 철수의 사용법을 보여줘요
 \`\`\`
       `;
 
