@@ -28,7 +28,7 @@ function initializePlayer(client) {
         restVersion: "v3"
     });
 
-    let currentTrackMessageId = null;
+  let currentTrackMessageId = null;
 
     client.riffy.on("nodeConnect", node => {
         console.log(`Node "${node.name}" connected.`);
@@ -42,17 +42,6 @@ function initializePlayer(client) {
         const channel = client.channels.cache.get(player.textChannel);
         const trackUri = track.info.uri;
         const requester = requesters.get(trackUri);
-
-        const card = new mewcard()
-            .setName(track.info.title)
-            .setAuthor(track.info.author)
-            .setTheme(config.musicardTheme)
-            .setBrightness(0)
-            .setThumbnail(track.info.thumbnail)
-            .setRequester(`${requester}`);
-
-        const buffer = await card.build();
-        const attachment = new AttachmentBuilder(buffer, { name: `musicard.png` });
 
         const embed = new EmbedBuilder()
             .setAuthor({
