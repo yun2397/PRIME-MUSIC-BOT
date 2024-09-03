@@ -9,7 +9,7 @@ async function skip(client, interaction) {
             const errorEmbed = new EmbedBuilder()
                 .setColor('#ff0000')
                 .setTitle('앗, 오류..')
-                .setDescription('❌ 재생 중인 플레이어를 찾을 수 없어요..');
+                .setDescription('❌ 재생 중인 사람을 찾을 수 없어요..');
 
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
             return;
