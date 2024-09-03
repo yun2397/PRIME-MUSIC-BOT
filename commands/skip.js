@@ -8,7 +8,7 @@ async function skip(client, interaction) {
         if (!player) {
             const errorEmbed = new EmbedBuilder()
                 .setColor('#ff0000')
-                .setTitle('앗, 오류..')
+                .setTitle('앗, 오류가..')
                 .setDescription('❌ 재생 중인 사람을 찾을 수 없어요..');
 
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
@@ -27,7 +27,7 @@ async function skip(client, interaction) {
         console.error('Error processing skip command:', error);
         const errorEmbed = new EmbedBuilder()
             .setColor('#ff0000')
-            .setTitle('앗, 오류..')
+            .setTitle('앗, 오류가..')
             .setDescription('❌ 요청을 처리하는 중에 문제가 생겼어요..');
 
         await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
