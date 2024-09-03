@@ -32,12 +32,12 @@ module.exports = {
     try {
 
       const start = Date.now();
-      interaction.reply("읏..흐응..ㄲ 기분좋아..").then(msg => {
+      interaction.reply("읏..흐응..ㄲ 기분좋아요..").then(msg => {
         const end = Date.now();
         const embed = new EmbedBuilder()
           .setColor(config.embedColor)
           .setTitle(`철수 응답속도`)
-          .setDescription(`**싸...싼다ㅏ앗!!!!** : ${end - start}ms`)
+          .setDescription(`**싸...쌀게요ㅅ!!!!** : ${end - start}ms`)
         return interaction.editReply({ embeds: [embed] }).catch(e => { });
       }).catch(err => { })
 
