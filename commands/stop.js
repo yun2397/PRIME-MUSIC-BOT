@@ -20,7 +20,7 @@ async function stop(client, interaction) {
 
         const embed = new EmbedBuilder()
             .setColor(config.embedColor)
-            .setDescription('**⏹️ 재생이 멈추고 철수가 사라졌어요!**');
+            .setDescription('**⏹️ 재생이 멈춰서 철수가 사라졌어요!**');
 
         await interaction.reply({ embeds: [embed] });
 
