@@ -59,7 +59,7 @@ function initializePlayer(client) {
                 name: '지금 재생중',
                 iconURL: config.MusicIcon
             })
-            .setDescription('🎶 **철수:**\n 🔁 `반복`, ❌ `취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
+            .setDescription('🎶 **철수 플레이어:**\n 🔁 `반복`, ❌ `취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
             .setImage('attachment://musicard.png')
             .setColor(config.embedColor);
 
@@ -86,9 +86,9 @@ function initializePlayer(client) {
             if (!voiceChannel || voiceChannel.id !== playerChannel) {
                 const vcEmbed = new EmbedBuilder()
                     .setColor(config.embedColor)
-                    .setDescription('🔒 **사용하려면 같은 음성 채널에 있어야 해요!**');
+                    .setDescription('🔒 **사용하려면 같은 음성 채널에 있어야 해요! 시발놈아**');
                 const sentMessage = await channel.send({ embeds: [vcEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
                 return;
             }
 
@@ -102,12 +102,12 @@ function initializePlayer(client) {
                     .setTimestamp();
 
                 const sentMessage = await channel.send({ embeds: [skipEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
             } else if (i.customId === 'disableLoop') {
                 disableLoop(player, channel);
             } else if (i.customId === 'showQueue') {
                 const queueMessage = queueNames.length > 0 ?
-                    `🎵 **Now Playing:**\n${formatTrack(queueNames[0])}\n\n📜 **Queue:**\n${queueNames.slice(1).map((song, index) => `${index + 1}. ${formatTrack(song)}`).join('\n')}` :
+                    `🎵 **지금 재생중:**\n${formatTrack(queueNames[0])}\n\n📜 **대기열:**\n${queueNames.slice(1).map((song, index) => `${index + 1}. ${formatTrack(song)}`).join('\n')}` :
                     "The queue is empty.";
                 const queueEmbed = new EmbedBuilder()
                     .setColor(config.embedColor)
@@ -115,7 +115,7 @@ function initializePlayer(client) {
                     .setDescription(queueMessage);
 
                 const sentMessage = await channel.send({ embeds: [queueEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 5000);
             } else if (i.customId === 'clearQueue') {
                 clearQueue(player);
                 const clearQueueEmbed = new EmbedBuilder()
@@ -124,7 +124,7 @@ function initializePlayer(client) {
                     .setTimestamp();
 
                 const sentMessage = await channel.send({ embeds: [clearQueueEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
             } else if (i.customId === 'stopTrack') {
                 player.stop();
                 player.destroy();
@@ -133,15 +133,15 @@ function initializePlayer(client) {
                     .setDescription('⏹️ **재생이 멈추고 철수가 사라졌어요!**');
 
                 const sentMessage = await channel.send({ embeds: [stopEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 10000);
             } else if (i.customId === 'pauseTrack') {
                 if (player.paused) {
                     const alreadyPausedEmbed = new EmbedBuilder()
                         .setColor(config.embedColor)
-                        .setDescription('⏸️ **재생이 이미 일시중지됐어요!**');
+                        .setDescription('⏸️ **이미 재생이 일시중지됐어요!**');
 
                     const sentMessage = await channel.send({ embeds: [alreadyPausedEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
                 } else {
                     player.pause(true);
                     const pauseEmbed = new EmbedBuilder()
@@ -149,16 +149,16 @@ function initializePlayer(client) {
                         .setDescription('⏸️ **재생이 일시중지됐어요!**');
 
                     const sentMessage = await channel.send({ embeds: [pauseEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
                 }
             } else if (i.customId === 'resumeTrack') {
                 if (!player.paused) {
                     const alreadyResumedEmbed = new EmbedBuilder()
                         .setColor(config.embedColor)
-                        .setDescription('▶️ **재생이 이미 다시 시작됐어요!**');
+                        .setDescription('▶️ **이미 재생중이에요!**');
 
                     const sentMessage = await channel.send({ embeds: [alreadyResumedEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
                 } else {
                     player.pause(false);
                     const resumeEmbed = new EmbedBuilder()
@@ -166,7 +166,7 @@ function initializePlayer(client) {
                         .setDescription('▶️ **재생이 다시 시작됐어요!**');
 
                     const sentMessage = await channel.send({ embeds: [resumeEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
                 }
             } else if (i.customId === 'volumeUp') {
                 if (player.volume < 100) {
@@ -174,7 +174,7 @@ function initializePlayer(client) {
                     player.setVolume(Math.min(player.volume + 10, 100));
                     const volumeUpEmbed = new EmbedBuilder()
                         .setColor(config.embedColor)
-                        .setDescription(`🔊 **볼륨이 올라갔어요 ${player.volume - oldVolume}% to ${player.volume}!**`);
+                        .setDescription(`🔊 **볼륨이 올라갔어요! ${player.volume - oldVolume}% to ${player.volume}%**`);
 
                     const sentMessage = await channel.send({ embeds: [volumeUpEmbed] });
                     setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
@@ -192,7 +192,7 @@ function initializePlayer(client) {
                     player.setVolume(Math.max(player.volume - 10, 10));
                     const volumeDownEmbed = new EmbedBuilder()
                         .setColor(config.embedColor)
-                        .setDescription(`🔉 **볼륨이 내려갔어요 ${oldVolume - player.volume}% to ${player.volume}!**`);
+                        .setDescription(`🔉 **볼륨이 내려갔어요! ${oldVolume - player.volume}% to ${player.volume}%!**`);
 
                     const sentMessage = await channel.send({ embeds: [volumeDownEmbed] });
                     setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
@@ -277,14 +277,14 @@ function initializePlayer(client) {
                 .setColor(config.embedColor)
                 .setTitle("🔁 **반복재생이 켜졌어요!**");
             const sentMessage = await channel.send({ embeds: [loopEmbed] });
-            setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+            setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
         } else {
             player.setLoop("track");
             const loopEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setTitle("🔁 **이미 반복재생이 켜졌어요!**");
+                .setTitle("🔁 **이미 반복재생이 켜져 있어요!**");
             const sentMessage = await channel.send({ embeds: [loopEmbed] });
-            setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+            setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
         }
     }
 
@@ -292,7 +292,7 @@ function initializePlayer(client) {
         player.setLoop("none");
         const loopEmbed = new EmbedBuilder()
             .setColor(config.embedColor)
-            .setTitle("❌ **반복재생이 취소됐어요!**");
+            .setTitle("❌ **반복 재생이 취소됐어요!**");
         const sentMessage = await channel.send({ embeds: [loopEmbed] });
         setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
     }
