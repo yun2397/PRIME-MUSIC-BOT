@@ -47,7 +47,7 @@ function initializePlayer(client) {
             .setName(track.info.title)
             .setAuthor(track.info.author)
             .setTheme(config.musicardTheme)
-            .setBrightness(50)
+            .setBrightness(0)
             .setThumbnail(track.info.thumbnail)
             .setRequester(`${requester}`);
 
