@@ -101,7 +101,7 @@ async function play(client, interaction) {
                     url: config.SupportServer
                 })
                 .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
-                 .setFooter({ text: '🎶 음악을 즐기세요!'}),
+                 .setFooter({ text: '🎶 흔들어라 이기야~'}),
 
             new EmbedBuilder()
                 .setColor(config.embedColor)
@@ -111,7 +111,7 @@ async function play(client, interaction) {
                     url: config.SupportServer
                 })
                 .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
-                 .setFooter({ text: '🎶 음악을 즐기세요!'}),
+                 .setFooter({ text: '🎶 흔들어라 이기야~'}),
 
             new EmbedBuilder()
                 .setColor(config.embedColor)
@@ -121,7 +121,7 @@ async function play(client, interaction) {
                     url: config.SupportServer
                 })
                 .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
-                .setFooter({ text: '🎶 음악을 즐기세요!'}),
+                .setFooter({ text: '🎶 흔들어라 이기야~'}),
         ];
 
         const randomIndex = Math.floor(Math.random() * embeds.length);
@@ -140,11 +140,11 @@ async function play(client, interaction) {
 
 module.exports = {
     name: "play",
-    description: "Play a song from a name or link",
+    description: "제목이나 링크를 입력해서 노래를 재생해요",
     permissions: "0x0000000000000800",
     options: [{
         name: 'name',
-        description: 'Enter song name / link or playlist',
+        description: '제목이나 링크 / 플레이리스트를 입력해 주세요!',
         type: ApplicationCommandOptionType.String,
         required: true
     }],
