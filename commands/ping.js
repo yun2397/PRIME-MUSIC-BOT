@@ -23,7 +23,7 @@ const config = require("../config.js");
 
 module.exports = {
   name: "ping",
-  description: "봇의 응답 속도를 확인해요",
+  description: "철수의 응답 속도를 확인해요",
   permissions: "0x0000000000000800",
   options: [],
   run: async (client, interaction) => {
@@ -36,8 +36,8 @@ module.exports = {
         const end = Date.now();
         const embed = new EmbedBuilder()
           .setColor(config.embedColor)
-          .setTitle(`봇 응답속도`)
-          .setDescription(`**찌이이익ㅡ!** : ${end - start}ms`)
+          .setTitle(`철수 응답속도`)
+          .setDescription(`**싸...싼다ㅏ앗!!!!** : ${end - start}ms`)
         return interaction.editReply({ embeds: [embed] }).catch(e => { });
       }).catch(err => { })
 
