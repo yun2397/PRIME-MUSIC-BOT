@@ -21,8 +21,8 @@ async function nowPlaying(client, interaction) {
         if (!player) {
             const errorEmbed = new EmbedBuilder()
                 .setColor('#ff0000')
-                .setTitle('오류')
-                .setDescription('❌ 현재 재생 중인 노래가 없습니다.');
+                .setTitle('앗, 오류..')
+                .setDescription('❌ 재생중인 노래가 없어요..');
 
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
             return;
@@ -33,7 +33,7 @@ async function nowPlaying(client, interaction) {
 
         const npEmbed = new EmbedBuilder()
             .setColor(config.embedColor)
-            .setTitle('🎵 현재 재생 중')
+            .setTitle('🎵 재생 중..')
             .setDescription(`[${player.current.info.title} - ${player.current.info.author}](${player.current.info.uri})\n\n${progressBar}`)
             .setThumbnail(player.current.info.thumbnail)
 
@@ -43,8 +43,8 @@ async function nowPlaying(client, interaction) {
         console.error('Error processing now playing command:', error);
         const errorEmbed = new EmbedBuilder()
             .setColor('#ff0000')
-            .setTitle('오류')
-            .setDescription('❌ 요청을 처리하는 동안 오류가 발생했습니다.');
+            .setTitle('앗, 오류..')
+            .setDescription('❌ 요청을 처리하는 중에 문제가 생겼어요..');
 
         await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
     }
@@ -52,7 +52,7 @@ async function nowPlaying(client, interaction) {
 
 module.exports = {
     name: "np",
-    description: "현재 재생 중인 노래와 진행 바를 표시합니다",
+    description: "재생 중인 노래와 진행 바를 표시해요",
     permissions: "0x0000000000000800",
     options: [],
     run: nowPlaying,
