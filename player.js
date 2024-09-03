@@ -42,13 +42,24 @@ function initializePlayer(client) {
         const channel = client.channels.cache.get(player.textChannel);
         const trackUri = track.info.uri;
         const requester = requesters.get(trackUri);
+        
+        const card = new mewcard()
+            .setName(track.info.title)
+            .setAuthor(track.info.author)
+            .setTheme(config.musicardTheme)
+            .setBrightness(0)
+            .setThumbnail(track.info.thumbnail)
+            .setRequester(`${requester}`);
 
+        const buffer = await card.build();
+        const attachment = new AttachmentBuilder(buffer, { name: `musicard.png` });
+        
         const embed = new EmbedBuilder()
             .setAuthor({
                 name: '지금 재생중이에요..!',
                 iconURL: config.MusicIcon
             })
-            .setDescription('`🎶 곡: **${track.info.title}**\n🎤 아티스트: **${track.info.author}**\n💿 요청자: **${requester}**\n 🎶 철수 플레이어:\n 🔁 `반복`, ❌ `취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `대기열 정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
+            .setDescription('🎶 철수 플레이어:\n 🔁 `반복`, ❌ `취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `대기열 정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
             .setImage('attachment://musicard.png')
             .setColor(config.embedColor);
 
