@@ -23,7 +23,7 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
   name: "support",
-  description: "Get support server link",
+  description: "서포터들을 보여줘요",
   permissions: "0x0000000000000800",
   options: [],
   run: async (client, interaction) => {
