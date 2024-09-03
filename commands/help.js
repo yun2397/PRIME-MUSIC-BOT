@@ -44,7 +44,7 @@ Your ultimate music companion on Discord. Here are the available commands:
 [ /skip    ] - 다음 노래로 넘어가요
 [ /stop    ] - 철수를 종료해요
 [ /np      ] - 지금 재생 중인 노래를 보여줘요
-[ /volume  ] - 철수 소리를 조절해요
+[ /volume  ] - 철수의 볼륨을 조절해요
 [ /ping    ] - 철수의 반응 속도를 체크해요
 [ /support ] - 서포트 서버 정보를 보여줘요
 [ /help    ] - 철수의 사용법을 보여줘요
