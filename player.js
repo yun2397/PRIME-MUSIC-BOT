@@ -262,7 +262,7 @@ function initializePlayer(client) {
             player.destroy();
             const queueEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setDescription('**대기열 노래가 종료되어요! 철수가 사라지려고 해요..!**');
+                .setDescription('**대기열이 없어서 철수가 사라졌어요..**');
 
             await channel.send({ embeds: [queueEmbed] });
         }
