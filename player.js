@@ -56,10 +56,10 @@ function initializePlayer(client) {
 
         const embed = new EmbedBuilder()
             .setAuthor({
-                name: 'Now Playing',
+                name: '지금 재생중',
                 iconURL: config.MusicIcon
             })
-            .setDescription('🎶 **Controls:**\n 🔁 `Loop`, ❌ `Disable`, ⏭️ `Skip`, 📜 `Queue`, 🗑️ `Clear`\n ⏹️ `Stop`, ⏸️ `Pause`, ▶️ `Resume`, 🔊 `Vol +`, 🔉 `Vol -`')
+            .setDescription('🎶 **철수:**\n 🔁 `반복`, ❌ `취소`, ⏭️ `스킵`, 📜 `재생목록`, 🗑️ `정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
             .setImage('attachment://musicard.png')
             .setColor(config.embedColor);
 
@@ -86,7 +86,7 @@ function initializePlayer(client) {
             if (!voiceChannel || voiceChannel.id !== playerChannel) {
                 const vcEmbed = new EmbedBuilder()
                     .setColor(config.embedColor)
-                    .setDescription('🔒 **You need to be in the same voice channel to use the controls!**');
+                    .setDescription('🔒 **사용하려면 같은 음성 채널에 있어야 해요!**');
                 const sentMessage = await channel.send({ embeds: [vcEmbed] });
                 setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
                 return;
@@ -98,7 +98,7 @@ function initializePlayer(client) {
                 player.stop();
                 const skipEmbed = new EmbedBuilder()
                     .setColor(config.embedColor)
-                    .setTitle("⏭️ **Player will play the next song!**")
+                    .setTitle("⏭️ **다음 곡을 재생해요!**")
                     .setTimestamp();
 
                 const sentMessage = await channel.send({ embeds: [skipEmbed] });
@@ -111,7 +111,7 @@ function initializePlayer(client) {
                     "The queue is empty.";
                 const queueEmbed = new EmbedBuilder()
                     .setColor(config.embedColor)
-                    .setTitle("📜 **Current Queue**")
+                    .setTitle("📜 **현재 대기열**")
                     .setDescription(queueMessage);
 
                 const sentMessage = await channel.send({ embeds: [queueEmbed] });
