@@ -46,7 +46,7 @@ function initializePlayer(client) {
         const card = new mewcard()
             .setName(track.info.title)
             .setAuthor(track.info.author)
-            .setTheme('https://discord.com/channels/973537588633817138/1041218377726832691/1280618872604459119')
+            .setTheme(config.musicardTheme)
             .setBrightness(50)
             .setThumbnail(track.info.thumbnail)
             .setRequester(`${requester}`);
