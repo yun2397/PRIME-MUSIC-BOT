@@ -31,8 +31,8 @@ async function play(client, interaction) {
         if (!interaction.member.voice.channelId) {
             const embed = new EmbedBuilder()
                 .setColor('#ff0000')
-                .setTitle('Voice Channel Required')
-                .setDescription('❌ You need to be in a voice channel to use this command.');
+                .setTitle('음성 채널이 필요해요..')
+                .setDescription('❌ 이 명령어를 사용하려면 음성 채널에 들어가 있어야 해요!');
 
             await interaction.reply({ embeds: [embed], ephemeral: true });
             return;
@@ -83,8 +83,8 @@ async function play(client, interaction) {
         } else {
             const errorEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setTitle('Error')
-                .setDescription('❌ No results found.');
+                .setTitle(''앗, 오류..'')
+                .setDescription('❌ 결과를 찾을 수 없었어요...');
 
             await interaction.editReply({ embeds: [errorEmbed] });
             return;
@@ -96,32 +96,32 @@ async function play(client, interaction) {
             new EmbedBuilder()
                 .setColor(config.embedColor)
                 .setAuthor({
-                    name: 'Request Update',
+                    name: '재생목록에 추가했어요..!',
                     iconURL: config.CheckmarkIcon,
                     url: config.SupportServer
                 })
-                .setDescription('**➡️ Your request has been successfully processed.**\n**➡️ Please use buttons to control playback**')
-                 .setFooter({ text: '🎶 Enjoy your music!'}),
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                 .setFooter({ text: '🎶 음악을 즐기세요!'}),
 
             new EmbedBuilder()
                 .setColor(config.embedColor)
                 .setAuthor({
-                    name: 'Request Update',
+                    name: '재생목록에 추가했어요..!',
                     iconURL: config.CheckmarkIcon,
                     url: config.SupportServer
                 })
-                .setDescription('**➡️ Your request has been successfully processed.**\n**➡️ Please use buttons to control playback**')
-                 .setFooter({ text: '🎶 Enjoy your music!'}),
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                 .setFooter({ text: '🎶 음악을 즐기세요!'}),
 
             new EmbedBuilder()
                 .setColor(config.embedColor)
                 .setAuthor({
-                    name: 'Request Update',
+                    name: '재생목록에 추가했어요..!',
                     iconURL: config.CheckmarkIcon,
                     url: config.SupportServer
                 })
-                .setDescription('**➡️ Your request has been successfully processed.**\n**➡️ Please use buttons to control playback**')
-                .setFooter({ text: '🎶 Enjoy your music!'})
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                .setFooter({ text: '🎶 음악을 즐기세요!'}),
         ];
 
         const randomIndex = Math.floor(Math.random() * embeds.length);
@@ -131,8 +131,8 @@ async function play(client, interaction) {
         console.error('Error processing play command:', error);
         const errorEmbed = new EmbedBuilder()
             .setColor('#ff0000')
-            .setTitle('Error')
-            .setDescription('❌ An error occurred while processing your request.');
+            .setTitle('앗, 오류..')
+            .setDescription('❌ 요청을 처리하는 중에 문제가 생겼어요..');
 
         await interaction.editReply({ embeds: [errorEmbed] });
     }
