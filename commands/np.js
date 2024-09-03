@@ -21,7 +21,7 @@ async function nowPlaying(client, interaction) {
         if (!player) {
             const errorEmbed = new EmbedBuilder()
                 .setColor('#ff0000')
-                .setTitle('앗, 오류..')
+                .setTitle('앗, 오류가..')
                 .setDescription('❌ 재생중인 노래가 없어요..');
 
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
@@ -43,7 +43,7 @@ async function nowPlaying(client, interaction) {
         console.error('Error processing now playing command:', error);
         const errorEmbed = new EmbedBuilder()
             .setColor('#ff0000')
-            .setTitle('앗, 오류..')
+            .setTitle('앗, 오류가..')
             .setDescription('❌ 요청을 처리하는 중에 문제가 생겼어요..');
 
         await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
