@@ -163,7 +163,7 @@ async function lyrics(client, interaction) {
 
 module.exports = {
     name: "lyrics",
-    description: "노래의 가사를 검색해요 *현재 노래 X",
+    description: "노래의 가사를 검색해요",
     permissions: "0x0000000000000800",
     options: [{
         name: 'search',
