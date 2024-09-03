@@ -83,7 +83,7 @@ async function play(client, interaction) {
         } else {
             const errorEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setTitle('앗, 오류..')
+                .setTitle('앗, 오류가..')
                 .setDescription('❌ 결과를 찾을 수 없었어요...');
 
             await interaction.editReply({ embeds: [errorEmbed] });
@@ -100,7 +100,7 @@ async function play(client, interaction) {
                     iconURL: config.CheckmarkIcon,
                     url: config.SupportServer
                 })
-                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**')
                  .setFooter({ text: '🎶 흔들어라 이기야~'}),
 
             new EmbedBuilder()
@@ -110,7 +110,7 @@ async function play(client, interaction) {
                     iconURL: config.CheckmarkIcon,
                     url: config.SupportServer
                 })
-                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**')
                  .setFooter({ text: '🎶 흔들어라 이기야~'}),
 
             new EmbedBuilder()
@@ -120,7 +120,7 @@ async function play(client, interaction) {
                     iconURL: config.CheckmarkIcon,
                     url: config.SupportServer
                 })
-                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**')
                 .setFooter({ text: '🎶 흔들어라 이기야~'}),
         ];
 
@@ -131,7 +131,7 @@ async function play(client, interaction) {
         console.error('Error processing play command:', error);
         const errorEmbed = new EmbedBuilder()
             .setColor('#ff0000')
-            .setTitle('앗, 오류..')
+            .setTitle('앗, 오류가..')
             .setDescription('❌ 요청을 처리하는 중에 문제가 생겼어요..');
 
         await interaction.editReply({ embeds: [errorEmbed] });
