@@ -35,7 +35,7 @@ module.exports = {
 \`\`\`css
 Welcome to ${botName}!
 
-Your ultimate music companion on Discord. Here are the available commands:
+영희의 친구 철수예요. 사용법은 다음과 같아요!
 
 [ /play    ] - 노래를 재생해요
 [ /pause   ] - 현재 노래를 잠깐 멈춰요
