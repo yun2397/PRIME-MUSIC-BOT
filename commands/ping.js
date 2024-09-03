@@ -23,7 +23,7 @@ const config = require("../config.js");
 
 module.exports = {
   name: "ping",
-  description: "check the bot latency",
+  description: "봇의 응답 속도를 확인해요",
   permissions: "0x0000000000000800",
   options: [],
   run: async (client, interaction) => {
@@ -32,12 +32,12 @@ module.exports = {
     try {
 
       const start = Date.now();
-      interaction.reply("Pinging....").then(msg => {
+      interaction.reply("읏..흐응..ㄲ 기분좋아..").then(msg => {
         const end = Date.now();
         const embed = new EmbedBuilder()
           .setColor(config.embedColor)
-          .setTitle(`Bot Latency`)
-          .setDescription(`**Pong** : ${end - start}ms`)
+          .setTitle(`봇 응답속도`)
+          .setDescription(`**찌이이익ㅡ!** : ${end - start}ms`)
         return interaction.editReply({ embeds: [embed] }).catch(e => { });
       }).catch(err => { })
 
