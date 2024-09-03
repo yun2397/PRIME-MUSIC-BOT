@@ -48,7 +48,7 @@ function initializePlayer(client) {
             .setAuthor(track.info.author)
             .setTheme(config.musicardTheme)
             .setBrightness(50)
-            .setThumbnail(https://cdn.discordapp.com/attachments/1041218377726832691/1280618872231170150/5e859ac6a648095e4175d03954f83454035.png?ex=66d8bcc3&is=66d76b43&hm=8bce00ef5627940f2d87fdf0dea607ae63a06a36b3b9c2b3b73fc66f70afd220&)
+            .setThumbnail('https://cdn.discordapp.com/attachments/1041218377726832691/1280618872231170150/5e859ac6a648095e4175d03954f83454035.png?ex=66d8bcc3&is=66d76b43&hm=8bce00ef5627940f2d87fdf0dea607ae63a06a36b3b9c2b3b73fc66f70afd220&')
             .setRequester(`${requester}`);
 
         const buffer = await card.build();
