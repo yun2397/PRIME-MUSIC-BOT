@@ -38,10 +38,21 @@ function initializePlayer(client) {
         console.error(`Node "${node.name}" encountered an error: ${error.message}.`);
     });
 
-client.riffy.on("trackStart", async (player, track) => {
-    const channel = client.channels.cache.get(player.textChannel);
-    const trackUri = track.info.uri;
-    const requester = requesters.get(trackUri);
+    client.riffy.on("trackStart", async (player, track) => {
+        const channel = client.channels.cache.get(player.textChannel);
+        const trackUri = track.info.uri;
+        const requester = requesters.get(trackUri);
+
+        const card = new mewcard()
+            .setName(track.info.title)
+            .setAuthor(track.info.author)
+            .setTheme(config.musicardTheme)
+            .setBrightness(50)
+            .setThumbnail(track.info.thumbnail)
+            .setRequester(`${requester}`);
+
+        const buffer = await card.build();
+        const attachment = new AttachmentBuilder(buffer, { name: `musicard.png` });
 
     const embed = new EmbedBuilder()
         .setAuthor({
