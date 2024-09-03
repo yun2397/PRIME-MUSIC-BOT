@@ -18,11 +18,24 @@
 
 
 */
+        const card = new mewcard()
+            .setName(track.info.title)
+            .setAuthor(track.info.author)
+            .setTheme(config.musicardTheme)
+            .setBrightness(0)
+            .setThumbnail(track.info.thumbnail)
+            .setRequester(`${requester}`);
+
+        const buffer = await card.build();
+        const attachment = new AttachmentBuilder(buffer, { name: `musicard.png` });
+
+
+*/
 const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
 const config = require("../config.js");
 
 const queueNames = [];
-const requesters = new Map();
+const requesters = new Map(); 
 
 async function play(client, interaction) {
     try {
@@ -61,15 +74,12 @@ async function play(client, interaction) {
             throw new TypeError('Expected tracks to be an array');
         }
 
-        let addedTracksDescription = '';
-
         if (loadType === 'PLAYLIST_LOADED') {
             for (const track of tracks) {
                 track.info.requester = interaction.user.username; 
                 player.queue.add(track);
                 queueNames.push(`[${track.info.title} - ${track.info.author}](${track.info.uri})`);
                 requesters.set(track.info.uri, interaction.user.username); 
-                addedTracksDescription += `\n- **${track.info.title}** by ${track.info.author}`;
             }
 
             if (!player.playing && !player.paused) player.play();
@@ -83,8 +93,6 @@ async function play(client, interaction) {
             requesters.set(track.info.uri, interaction.user.username); 
 
             if (!player.playing && !player.paused) player.play();
-            
-            addedTracksDescription = `\n- **${track.info.title}** by ${track.info.author}`;
         } else {
             const errorEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
@@ -97,17 +105,40 @@ async function play(client, interaction) {
 
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        const successEmbed = new EmbedBuilder()
-            .setColor(config.embedColor)
-            .setAuthor({
-                name: '재생목록에 추가했어요..!',
-                iconURL: config.CheckmarkIcon,
-                url: config.SupportServer
-            })
-            .setDescription(`**➡️ 요청이 성공적으로 처리되었어요!**${addedTracksDescription}`)
-            .setFooter({ text: '🎶 흔들어라 이기야~' });
+        const embeds = [
+            new EmbedBuilder()
+                .setColor(config.embedColor)
+                .setAuthor({
+                    name: '재생목록에 추가했어요..!',
+                    iconURL: config.CheckmarkIcon,
+                    url: config.SupportServer
+                })
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**')
+                 .setFooter({ text: '🎶 흔들어라 이기야~'}),
 
-        await interaction.followUp({ embeds: [successEmbed] });
+            new EmbedBuilder()
+                .setColor(config.embedColor)
+                .setAuthor({
+                    name: '재생목록에 추가했어요..!',
+                    iconURL: config.CheckmarkIcon,
+                    url: config.SupportServer
+                })
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**')
+                 .setFooter({ text: '🎶 흔들어라 이기야~'}),
+
+            new EmbedBuilder()
+                .setColor(config.embedColor)
+                .setAuthor({
+                    name: '재생목록에 추가했어요..!',
+                    iconURL: config.CheckmarkIcon,
+                    url: config.SupportServer
+                })
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**')
+                .setFooter({ text: '🎶 흔들어라 이기야~'}),
+        ];
+
+        const randomIndex = Math.floor(Math.random() * embeds.length);
+        await interaction.followUp({ embeds: [embeds[randomIndex]] });
 
     } catch (error) {
         console.error('Error processing play command:', error);
@@ -119,21 +150,6 @@ async function play(client, interaction) {
         await interaction.editReply({ embeds: [errorEmbed] });
     }
 }
-
-module.exports = {
-    name: "play",
-    description: "제목이나 링크를 입력해서 노래를 재생해요",
-    permissions: "0x0000000000000800",
-    options: [{
-        name: 'name',
-        description: '제목이나 링크 / 플레이리스트를 입력해 주세요!',
-        type: ApplicationCommandOptionType.String,
-        required: true
-    }],
-    run: play,
-    queueNames: queueNames,
-    requesters: requesters 
-};
 
 
 
