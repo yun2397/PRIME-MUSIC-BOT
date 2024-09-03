@@ -27,7 +27,7 @@ module.exports = {
   setupFilePath: './commands/setup.json',
   commandsDir: './commands',  
   embedColor: "393a50",
-  musicardTheme:"themes16", //Goes from themes1 to themes19
+  musicardTheme:"https://discord.com/channels/973537588633817138/1041218377726832691/1280618872604459119", //Goes from themes1 to themes19
   activityName: "You", // This is bot status Write Anything here 
   activityType: "WATCHING",  // Available activity types : LISTENING , PLAYING
   SupportServer: "https://discord.gg/xQF9f9yUEM",
