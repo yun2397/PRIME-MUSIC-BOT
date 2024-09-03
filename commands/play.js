@@ -83,7 +83,7 @@ async function play(client, interaction) {
         } else {
             const errorEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setTitle(''앗, 오류..'')
+                .setTitle('앗, 오류..')
                 .setDescription('❌ 결과를 찾을 수 없었어요...');
 
             await interaction.editReply({ embeds: [errorEmbed] });
