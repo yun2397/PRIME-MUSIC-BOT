@@ -36,7 +36,7 @@ async function resume(client, interaction) {
 
 module.exports = {
     name: "resume",
-    description: "재생을 다시 시작해요!",
+    description: "재생을 다시 시작해요",
     permissions: "0x0000000000000800",
     options: [],
     run: resume
