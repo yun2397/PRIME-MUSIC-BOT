@@ -15,17 +15,6 @@
 ║  ## YouTube : https://www.youtube.com/@GlaceYt                         ║
 ║                                                                        ║
 ╚════════════════════════════════════════════════════════════════════════╝
-*/
-        const card = new mewcard()
-            .setName(track.info.title)
-            .setAuthor(track.info.author)
-            .setTheme(config.musicardTheme)
-            .setBrightness(0)
-            .setThumbnail(track.info.thumbnail)
-            .setRequester(`${requester}`);
-
-        const buffer = await card.build();
-        const attachment = new AttachmentBuilder(buffer, { name: `musicard.png` });
 
 */
 const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
