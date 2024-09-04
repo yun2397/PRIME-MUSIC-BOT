@@ -44,6 +44,8 @@ async function play(client, interaction) {
             textChannel: interaction.channelId,
             deaf: true
         });
+      
+        player.setVolume(50);
 
         await interaction.deferReply();
 
