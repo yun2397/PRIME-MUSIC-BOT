@@ -44,22 +44,21 @@ async function play(client, interaction) {
             textChannel: interaction.channelId,
             deaf: true
         });
-      
+
         player.setVolume(20);
 
+        // 응답 지연 알림
         await interaction.deferReply();
 
         const resolve = await client.riffy.resolve({ query: query, requester: interaction.user.username });
-        //console.log('Resolve response:', resolve);
 
         if (!resolve || typeof resolve !== 'object') {
             throw new TypeError('Resolve response is not an object');
         }
 
-        const { loadType, tracks, playlistInfo } = resolve;
+        const { loadType, tracks } = resolve;
 
         if (!Array.isArray(tracks)) {
-            console.error('Expected tracks to be an array:', tracks);
             throw new TypeError('Expected tracks to be an array');
         }
 
@@ -67,10 +66,10 @@ async function play(client, interaction) {
 
         if (loadType === 'PLAYLIST_LOADED') {
             for (const track of tracks) {
-                track.info.requester = interaction.user.username; 
+                track.info.requester = interaction.user.username;
                 player.queue.add(track);
                 queueNames.push(`[${track.info.title} - ${track.info.author}](${track.info.uri})`);
-                requesters.set(track.info.uri, interaction.user.username); 
+                requesters.set(track.info.uri, interaction.user.username);
                 addedTracksDescription += `\n- **${track.info.title}** by ${track.info.author}`;
             }
 
@@ -78,14 +77,14 @@ async function play(client, interaction) {
 
         } else if (loadType === 'SEARCH_RESULT' || loadType === 'TRACK_LOADED') {
             const track = tracks.shift();
-            track.info.requester = interaction.user.username; 
+            track.info.requester = interaction.user.username;
 
             player.queue.add(track);
             queueNames.push(`[${track.info.title} - ${track.info.author}](${track.info.uri})`);
-            requesters.set(track.info.uri, interaction.user.username); 
+            requesters.set(track.info.uri, interaction.user.username);
 
             if (!player.playing && !player.paused) player.play();
-            
+
             addedTracksDescription = `\n- **${track.info.title}** by ${track.info.author}`;
         } else {
             const errorEmbed = new EmbedBuilder()
@@ -97,8 +96,7 @@ async function play(client, interaction) {
             return;
         }
 
-        await new Promise(resolve => setTimeout(resolve, 500));
-
+        // 성공 알림
         const successEmbed = new EmbedBuilder()
             .setColor(config.embedColor)
             .setAuthor({
@@ -109,7 +107,7 @@ async function play(client, interaction) {
             .setDescription(`**➡️ 요청이 성공적으로 처리되었어요!**${addedTracksDescription}`)
             .setFooter({ text: '🎶 흔들어라 이기야~' });
 
-        await interaction.followUp({ embeds: [successEmbed] });
+        await interaction.editReply({ embeds: [successEmbed] });
 
     } catch (error) {
         console.error('Error processing play command:', error);
@@ -118,9 +116,14 @@ async function play(client, interaction) {
             .setTitle('앗, 오류가..')
             .setDescription('❌ 요청을 처리하는 중에 문제가 생겼어요..');
 
-        await interaction.editReply({ embeds: [errorEmbed] });
+        if (interaction.deferred) {
+            await interaction.editReply({ embeds: [errorEmbed] });
+        } else {
+            await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+        }
     }
 }
+
 
 module.exports = {
     name: "play",
