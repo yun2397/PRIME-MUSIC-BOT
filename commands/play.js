@@ -38,6 +38,12 @@ async function play(client, interaction) {
             return;
         }
 
+        // 디버깅: 값을 출력해서 확인
+        console.log('Guild ID:', interaction.guildId);
+        console.log('Voice Channel ID:', interaction.member.voice.channelId);
+        console.log('Text Channel ID:', interaction.channelId);
+
+        // 연결 시도
         const player = client.riffy.createConnection({
             guildId: interaction.guildId,
             voiceChannel: interaction.member.voice.channelId,
@@ -46,8 +52,6 @@ async function play(client, interaction) {
         });
 
         player.setVolume(20);
-
-        // 응답 지연 알림
         await interaction.deferReply();
 
         const resolve = await client.riffy.resolve({ query: query, requester: interaction.user.username });
@@ -96,7 +100,6 @@ async function play(client, interaction) {
             return;
         }
 
-        // 성공 알림
         const successEmbed = new EmbedBuilder()
             .setColor(config.embedColor)
             .setAuthor({
@@ -110,7 +113,7 @@ async function play(client, interaction) {
         await interaction.editReply({ embeds: [successEmbed] });
 
     } catch (error) {
-        console.error('Error processing play command:', error);
+        console.error('Error in play function:', error);  // 에러 내용 출력
         const errorEmbed = new EmbedBuilder()
             .setColor('#ff0000')
             .setTitle('앗, 오류가..')
@@ -123,6 +126,7 @@ async function play(client, interaction) {
         }
     }
 }
+
 
 
 module.exports = {
