@@ -36,12 +36,17 @@ module.exports = {
   embedTimeout: 5,  // Timeout before the button interaction embeds are deleted ( Default - 5 seconds)
   errorLog: "", 
 
-  nodes: [
+   // Lavalink Server Details
+
+      nodes: [
     {
-host : v3.lavalink.rocks
-Port : 443
-Password : "horizxon.tech"
-Secure : true
+        name: "Node #1",
+        host: "v3.lavalink.rocks",
+        port: 443,
+        password: "horizxon.tech",
+        reconnectTimeout: 5000,
+        reconnectTries: Infinity,
+        secure: true
     },
  ]
 }
