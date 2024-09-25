@@ -6,13 +6,13 @@ const config = require("./config.js");
 
 function initializePlayer(client) {
     const nodes = config.nodes.map(node => ({
-        name: node.name,
-        host: node.host,
-        port: node.port,
-        password: node.password,
-        secure: node.secure,
+        name: "Node #1",
+        host: "lava-v3.ajieblogs.eu.org",
+        port: 443,
+        password: "https://dsc.gg/ajidevserver",
         reconnectTimeout: 5000,
-        reconnectTries: Infinity
+        reconnectTries: Infinity,
+        secure: true
         
     }));
 
