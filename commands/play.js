@@ -46,8 +46,6 @@ async function play(client, interaction) {
         });
       
         player.setVolume(20);
-      
-        });
   
         await interaction.deferReply();
 
