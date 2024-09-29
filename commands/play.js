@@ -22,7 +22,7 @@ const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
 const config = require("../config.js");
 
 const queueNames = [];
-const requesters = new Map();
+const requesters = new Map(); 
 
 async function play(client, interaction) {
     try {
@@ -46,7 +46,7 @@ async function play(client, interaction) {
         });
       
         player.setVolume(20);
-
+      
         await interaction.deferReply();
 
         const resolve = await client.riffy.resolve({ query: query, requester: interaction.user.username });
@@ -63,15 +63,12 @@ async function play(client, interaction) {
             throw new TypeError('Expected tracks to be an array');
         }
 
-        let addedTracksDescription = '';
-
         if (loadType === 'PLAYLIST_LOADED') {
             for (const track of tracks) {
                 track.info.requester = interaction.user.username; 
                 player.queue.add(track);
                 queueNames.push(`[${track.info.title} - ${track.info.author}](${track.info.uri})`);
                 requesters.set(track.info.uri, interaction.user.username); 
-                addedTracksDescription += `\n- **${track.info.title}** by ${track.info.author}`;
             }
 
             if (!player.playing && !player.paused) player.play();
@@ -85,12 +82,10 @@ async function play(client, interaction) {
             requesters.set(track.info.uri, interaction.user.username); 
 
             if (!player.playing && !player.paused) player.play();
-            
-            addedTracksDescription = `\n- **${track.info.title}** by ${track.info.author}`;
         } else {
             const errorEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setTitle('앗, 오류가..')
+                .setTitle(''앗, 오류..'')
                 .setDescription('❌ 결과를 찾을 수 없었어요...');
 
             await interaction.editReply({ embeds: [errorEmbed] });
@@ -99,23 +94,46 @@ async function play(client, interaction) {
 
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        const successEmbed = new EmbedBuilder()
-            .setColor(config.embedColor)
-            .setAuthor({
-                name: '재생목록에 추가했어요..!',
-                iconURL: config.CheckmarkIcon,
-                url: config.SupportServer
-            })
-            .setDescription(`**➡️ 요청이 성공적으로 처리되었어요!**${addedTracksDescription}`)
-            .setFooter({ text: '🎶 흔들어라 이기야~' });
+        const embeds = [
+            new EmbedBuilder()
+                .setColor(config.embedColor)
+                .setAuthor({
+                    name: '재생목록에 추가했어요..!',
+                    iconURL: config.CheckmarkIcon,
+                    url: config.SupportServer
+                })
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                 .setFooter({ text: '🎶 흔들어라 이기야~'}),
 
-        await interaction.followUp({ embeds: [successEmbed] });
+            new EmbedBuilder()
+                .setColor(config.embedColor)
+                .setAuthor({
+                    name: '재생목록에 추가했어요..!',
+                    iconURL: config.CheckmarkIcon,
+                    url: config.SupportServer
+                })
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                 .setFooter({ text: '🎶 흔들어라 이기야~'}),
+
+            new EmbedBuilder()
+                .setColor(config.embedColor)
+                .setAuthor({
+                    name: '재생목록에 추가했어요..!',
+                    iconURL: config.CheckmarkIcon,
+                    url: config.SupportServer
+                })
+                .setDescription('**➡️ 요청이 성공적으로 처리되었어요!**\n**➡️ 재생을 제어하려면 버튼을 눌러주세요~**')
+                .setFooter({ text: '🎶 흔들어라 이기야~'}),
+        ];
+
+        const randomIndex = Math.floor(Math.random() * embeds.length);
+        await interaction.followUp({ embeds: [embeds[randomIndex]] });
 
     } catch (error) {
         console.error('Error processing play command:', error);
         const errorEmbed = new EmbedBuilder()
             .setColor('#ff0000')
-            .setTitle('앗, 오류가..')
+            .setTitle('앗, 오류..')
             .setDescription('❌ 요청을 처리하는 중에 문제가 생겼어요..');
 
         await interaction.editReply({ embeds: [errorEmbed] });
@@ -136,7 +154,6 @@ module.exports = {
     queueNames: queueNames,
     requesters: requesters 
 };
-
 
 
 
