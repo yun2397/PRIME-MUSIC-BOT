@@ -41,12 +41,12 @@ module.exports = {
   nodes: [
     {
         name: "Node #1",
-        host: "krn.2d.gay",
-        port: 443,
-        password: "AWP)JQ$Gv9}dm.u",
+        host: "37.114.42.191",
+        port: 6767,
+        password: "danteisnttaken",
         reconnectTimeout: 5000,
         reconnectTries: Infinity,
-        secure: true 
+        secure: false
     },
  ]
 }
