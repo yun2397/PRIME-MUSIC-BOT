@@ -45,9 +45,9 @@ async function play(client, interaction) {
             deaf: true
         });
       
-        player.setVolume(20);
-  
         await interaction.deferReply();
+
+              player.setVolume(20);
 
         const resolve = await client.riffy.resolve({ query: query, requester: interaction.user.username });
         //console.log('Resolve response:', resolve);
