@@ -38,12 +38,12 @@ module.exports = {
 
    // Lavalink Server Details
 
-  nodes: [
+nodes: [
     {
-        name: "Node #1",
-        host: "lavalink.jirayu.net",
-        port: 2334,
-        password: "youshallnotpass",
+        name: "Server",
+        host: "nodev4.fypmoon.org",
+        port: 1118,
+        password: "fypmoon.org",
         reconnectTimeout: 5000,
         reconnectTries: Infinity,
         secure: false
