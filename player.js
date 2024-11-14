@@ -1,8 +1,10 @@
 const { Riffy } = require("riffy");
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder } = require("discord.js");
 const { queueNames, requesters } = require("./commands/play");
-const { mewcard } = require("mewcard");
+const { Dynamic } = require("musicard");
 const config = require("./config.js");
+const fs = require("fs");
+const path = require("path");
 
 function initializePlayer(client) {
     const nodes = config.nodes.map(node => ({
@@ -13,7 +15,6 @@ function initializePlayer(client) {
         secure: node.secure,
         reconnectTimeout: 5000,
         reconnectTries: Infinity
-        
     }));
 
     client.riffy = new Riffy(client, nodes, {
@@ -25,10 +26,11 @@ function initializePlayer(client) {
             if (guild) guild.shard.send(payload);
         },
         defaultSearchPlatform: "ytmsearch",
-        restVersion: "v3"
+        restVersion: "v4",
     });
 
     let currentTrackMessageId = null;
+    let collector = null;
 
     client.riffy.on("nodeConnect", node => {
         console.log(`Node "${node.name}" connected.`);
@@ -42,348 +44,273 @@ function initializePlayer(client) {
         const channel = client.channels.cache.get(player.textChannel);
         const trackUri = track.info.uri;
         const requester = requesters.get(trackUri);
-        
-        const card = new mewcard()
-            .setName(track.info.title)
-            .setAuthor(track.info.author)
-            .setTheme(config.musicardTheme)
-            .setBrightness(0)
-            .setThumbnail(track.info.thumbnail)
-            .setRequester(`${requester}`);
 
-        const buffer = await card.build();
-        const attachment = new AttachmentBuilder(buffer, { name: `musicard.png` });
-        
-        const embed = new EmbedBuilder()
-            .setAuthor({
-                name: '지금 재생중이에요..!',
-                iconURL: config.MusicIcon
-            })
-            .setDescription('🎶 철수 플레이어 :\n 🔁 `반복`, ❌ `반복취소`, ⏭️ `스킵`, 📜 `대기열`, 🗑️ `대기열 정리`\n ⏹️ `정지`, ⏸️ `일시정지`, ▶️ `재생`, 🔊 `볼륨 +`, 🔉 `볼륨 -`')
-            .setImage('attachment://musicard.png')
-            .setColor(config.embedColor);
+        try {
+            const musicard = await Dynamic({
+                thumbnailImage: track.info.thumbnail || 'https://example.com/default_thumbnail.png',
+                backgroundColor: '#070707',
+                progress: 10,
+                progressColor: '#FF7A00',
+                progressBarColor: '#5F2D00',
+                name: track.info.title,
+                nameColor: '#FF7A00',
+                author: track.info.author || 'Unknown Artist',
+                authorColor: '#696969',
+            });
 
-        const actionRow1 = createActionRow1(false);
-        const actionRow2 = createActionRow2(false);
+            // Save the generated card to a file
+            const cardPath = path.join(__dirname, 'musicard.png');
+            fs.writeFileSync(cardPath, musicard);
 
-        const message = await channel.send({ embeds: [embed], files: [attachment], components: [actionRow1, actionRow2] });
-        currentTrackMessageId = message.id;
+            // Prepare the attachment and embed
+            const attachment = new AttachmentBuilder(cardPath, { name: 'musicard.png' });
+            const embed = new EmbedBuilder()
+                .setAuthor({
+                    name: 'Now Playing',
+                    iconURL: 'https://cdn.discordapp.com/emojis/838704777436200981.gif' // Replace with actual icon URL
+                })
+                .setDescription('🎶 **Controls:**\n 🔁 `Loop`, ❌ `Disable`, ⏭️ `Skip`, 📜 `Queue`, 🗑️ `Clear`\n ⏹️ `Stop`, ⏸️ `Pause`, ▶️ `Resume`, 🔊 `Vol +`, 🔉 `Vol -`')
+                .setImage('attachment://musicard.png')
+                .setColor('#FF7A00');
 
-        const filter = i => [
-            'loopToggle', 'skipTrack', 'disableLoop', 'showQueue', 'clearQueue',
-            'stopTrack', 'pauseTrack', 'resumeTrack', 'volumeUp', 'volumeDown'
-        ].includes(i.customId);
+            // Action rows for music controls
+            const actionRow1 = createActionRow1(false);
+            const actionRow2 = createActionRow2(false);
 
-        const collector = message.createMessageComponentCollector({ filter });
+            // Send the message and set up the collector
+            const message = await channel.send({
+                embeds: [embed],
+                files: [attachment],
+                components: [actionRow1, actionRow2]
+            });
+            currentTrackMessageId = message.id;
 
-        collector.on('collect', async i => {
-            await i.deferUpdate();
+            if (collector) collector.stop(); // Stop any existing collectors
+            collector = setupCollector(client, player, channel, message);
 
-            const member = i.member;
-            const voiceChannel = member.voice.channel;
-            const playerChannel = player.voiceChannel;
-
-            if (!voiceChannel || voiceChannel.id !== playerChannel) {
-                const vcEmbed = new EmbedBuilder()
-                    .setColor(config.embedColor)
-                    .setDescription('🔒 **사용하려면 같은 음성 채널에 있어야 해요! 시발놈아**');
-                const sentMessage = await channel.send({ embeds: [vcEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
-                return;
-            }
-
-            if (i.customId === 'loopToggle') {
-                toggleLoop(player, channel);
-            } else if (i.customId === 'skipTrack') {
-                player.stop();
-                const skipEmbed = new EmbedBuilder()
-                    .setColor(config.embedColor)
-                    .setTitle("⏭️ **다음 곡을 재생해요!**")
-                    .setTimestamp();
-
-                const sentMessage = await channel.send({ embeds: [skipEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
-            } else if (i.customId === 'disableLoop') {
-                disableLoop(player, channel);
-            } else if (i.customId === 'showQueue') {
-                const queueMessage = queueNames.length > 0 ?
-                    `🎵 **지금 재생중:**\n${formatTrack(queueNames[0])}\n\n📜 **대기열:**\n${queueNames.slice(1).map((song, index) => `${index + 1}. ${formatTrack(song)}`).join('\n')}` :
-                    "The queue is empty.";
-                const queueEmbed = new EmbedBuilder()
-                    .setColor(config.embedColor)
-                    .setTitle("📜 **현재 대기열이에요!**")
-                    .setDescription(queueMessage);
-
-                const sentMessage = await channel.send({ embeds: [queueEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 5000);
-            } else if (i.customId === 'clearQueue') {
-                clearQueue(player);
-                const clearQueueEmbed = new EmbedBuilder()
-                    .setColor(config.embedColor)
-                    .setTitle("🗑️ **대기열이 지워졌어요!**")
-                    .setTimestamp();
-
-                const sentMessage = await channel.send({ embeds: [clearQueueEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
-            } else if (i.customId === 'stopTrack') {
-                player.stop();
-                player.destroy();
-                const stopEmbed = new EmbedBuilder()
-                    .setColor(config.embedColor)
-                    .setDescription('⏹️ **재생이 멈춰서 철수가 사라졌어요!**');
-
-                const sentMessage = await channel.send({ embeds: [stopEmbed] });
-                setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 10000);
-            } else if (i.customId === 'pauseTrack') {
-                if (player.paused) {
-                    const alreadyPausedEmbed = new EmbedBuilder()
-                        .setColor(config.embedColor)
-                        .setDescription('⏸️ **이미 재생이 일시중지됐어요!**');
-
-                    const sentMessage = await channel.send({ embeds: [alreadyPausedEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
-                } else {
-                    player.pause(true);
-                    const pauseEmbed = new EmbedBuilder()
-                        .setColor(config.embedColor)
-                        .setDescription('⏸️ **재생이 일시중지됐어요!**');
-
-                    const sentMessage = await channel.send({ embeds: [pauseEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
-                }
-            } else if (i.customId === 'resumeTrack') {
-                if (!player.paused) {
-                    const alreadyResumedEmbed = new EmbedBuilder()
-                        .setColor(config.embedColor)
-                        .setDescription('▶️ **이미 재생중이에요!**');
-
-                    const sentMessage = await channel.send({ embeds: [alreadyResumedEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
-                } else {
-                    player.pause(false);
-                    const resumeEmbed = new EmbedBuilder()
-                        .setColor(config.embedColor)
-                        .setDescription('▶️ **재생이 다시 시작됐어요!**');
-
-                    const sentMessage = await channel.send({ embeds: [resumeEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
-                }
-            } else if (i.customId === 'volumeUp') {
-                if (player.volume < 100) {
-                    const oldVolume = player.volume;
-                    player.setVolume(Math.min(player.volume + 10, 100));
-                    const volumeUpEmbed = new EmbedBuilder()
-                        .setColor(config.embedColor)
-                        .setDescription(`🔊 **볼륨이 올라갔어요! ${player.volume - oldVolume}% to ${player.volume}%**`);
-
-                    const sentMessage = await channel.send({ embeds: [volumeUpEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
-                } else {
-                    const maxVolumeEmbed = new EmbedBuilder()
-                        .setColor(config.embedColor)
-                        .setDescription('🔊 **볼륨이 최대에요!**');
-
-                    const sentMessage = await channel.send({ embeds: [maxVolumeEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
-                }
-            } else if (i.customId === 'volumeDown') {
-                if (player.volume > 10) {
-                    const oldVolume = player.volume;
-                    player.setVolume(Math.max(player.volume - 10, 10));
-                    const volumeDownEmbed = new EmbedBuilder()
-                        .setColor(config.embedColor)
-                        .setDescription(`🔉 **볼륨이 내려갔어요! ${oldVolume - player.volume}% to ${player.volume}%!**`);
-
-                    const sentMessage = await channel.send({ embeds: [volumeDownEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
-                } else {
-                    const minVolumeEmbed = new EmbedBuilder()
-                        .setColor(config.embedColor)
-                        .setDescription('🔉 **볼륨이 최소에요!**');
-
-                    const sentMessage = await channel.send({ embeds: [minVolumeEmbed] });
-                    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
-                }
-            }
-        });
-
-        collector.on('end', collected => {
-            console.log(`Collected ${collected.size} interactions.`);
-        });
+        } catch (error) {
+            console.error("Error creating or sending music card:", error.message);
+            const errorEmbed = new EmbedBuilder()
+                .setColor('#FF0000')
+                .setDescription("⚠️ **Unable to load track card. Continuing playback...**");
+            await channel.send({ embeds: [errorEmbed] });
+        }
     });
 
-    client.riffy.on("trackEnd", async (player, track) => {
-        const channel = client.channels.cache.get(player.textChannel);
-        if (!channel || !currentTrackMessageId) return;
-
-        const message = await channel.messages.fetch(currentTrackMessageId).catch(console.error);
-        if (message) {
-            const disabledRow1 = createActionRow1(true);
-            const disabledRow2 = createActionRow2(true);
-
-            await message.edit({ components: [disabledRow1, disabledRow2] }).catch(console.error);
-        }
-
+    client.riffy.on("trackEnd", async (player) => {
+        await disableTrackMessage(client, player);
         currentTrackMessageId = null;
     });
 
     client.riffy.on("playerDisconnect", async (player) => {
-        const channel = client.channels.cache.get(player.textChannel);
-        if (!channel || !currentTrackMessageId) return;
-
-        const message = await channel.messages.fetch(currentTrackMessageId).catch(console.error);
-        if (message) {
-            const disabledRow1 = createActionRow1(true);
-            const disabledRow2 = createActionRow2(true);
-
-            await message.edit({ components: [disabledRow1, disabledRow2] }).catch(console.error);
-        }
-
+        await disableTrackMessage(client, player);
         currentTrackMessageId = null;
     });
 
     client.riffy.on("queueEnd", async (player) => {
         const channel = client.channels.cache.get(player.textChannel);
-        if (!channel || !currentTrackMessageId) return;
-
-        const message = await channel.messages.fetch(currentTrackMessageId).catch(console.error);
-        if (message) {
-            const disabledRow1 = createActionRow1(true);
-            const disabledRow2 = createActionRow2(true);
-
-            await message.edit({ components: [disabledRow1, disabledRow2] }).catch(console.error);
-        }
-
-        const autoplay = false;
-
-        if (autoplay) {
-            player.autoplay(player);
-        } else {
-            player.destroy();
+        if (channel && currentTrackMessageId) {
             const queueEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setDescription('**대기열이 없어서 철수가 사라졌어요..**');
-
+                .setDescription('**Queue Songs ended! Disconnecting Bot!**');
             await channel.send({ embeds: [queueEmbed] });
         }
-
+        player.destroy();
         currentTrackMessageId = null;
     });
 
-    async function toggleLoop(player, channel) {
-        if (player.loop === "track") {
-            player.setLoop("queue");
-            const loopEmbed = new EmbedBuilder()
-                .setColor(config.embedColor)
-                .setTitle("🔁 **반복재생이 켜졌어요!**");
-            const sentMessage = await channel.send({ embeds: [loopEmbed] });
-            setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
-        } else {
-            player.setLoop("track");
-            const loopEmbed = new EmbedBuilder()
-                .setColor(config.embedColor)
-                .setTitle("🔁 **이미 반복재생이 켜져 있어요!**");
-            const sentMessage = await channel.send({ embeds: [loopEmbed] });
-            setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 2000);
+    async function disableTrackMessage(client, player) {
+        const channel = client.channels.cache.get(player.textChannel);
+        if (!channel || !currentTrackMessageId) return;
+
+        try {
+            const message = await channel.messages.fetch(currentTrackMessageId);
+            if (message) {
+                const disabledRow1 = createActionRow1(true);
+                const disabledRow2 = createActionRow2(true);
+                await message.edit({ components: [disabledRow1, disabledRow2] });
+            }
+        } catch (error) {
+            console.error("Failed to disable message components:", error);
         }
     }
+}
 
-    async function disableLoop(player, channel) {
-        player.setLoop("none");
-        const loopEmbed = new EmbedBuilder()
+function setupCollector(client, player, channel, message) {
+    const filter = i => [
+        'loopToggle', 'skipTrack', 'disableLoop', 'showQueue', 'clearQueue',
+        'stopTrack', 'pauseTrack', 'resumeTrack', 'volumeUp', 'volumeDown'
+    ].includes(i.customId);
+
+    const collector = message.createMessageComponentCollector({ filter, time: 600000 }); // Set timeout if desired
+
+    collector.on('collect', async i => {
+        await i.deferUpdate();
+
+        const member = i.member;
+        const voiceChannel = member.voice.channel;
+        const playerChannel = player.voiceChannel;
+
+        if (!voiceChannel || voiceChannel.id !== playerChannel) {
+            const vcEmbed = new EmbedBuilder()
+                .setColor(config.embedColor)
+                .setDescription('🔒 **You need to be in the same voice channel to use the controls!**');
+            const sentMessage = await channel.send({ embeds: [vcEmbed] });
+            setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+            return;
+        }
+
+        handleInteraction(i, player, channel);
+    });
+
+    collector.on('end', () => {
+        console.log("Collector stopped.");
+    });
+
+    return collector;
+}
+
+async function handleInteraction(i, player, channel) {
+    switch (i.customId) {
+        case 'loopToggle':
+            toggleLoop(player, channel);
+            break;
+        case 'skipTrack':
+            player.stop();
+            await sendEmbed(channel, "⏭️ **Player will play the next song!**");
+            break;
+        case 'disableLoop':
+            disableLoop(player, channel);
+            break;
+        case 'showQueue':
+            showQueue(channel);
+            break;
+        case 'clearQueue':
+            player.queue.clear();
+            await sendEmbed(channel, "🗑️ **Queue has been cleared!**");
+            break;
+        case 'stopTrack':
+            player.stop();
+            player.destroy();
+            await sendEmbed(channel, '⏹️ **Playback has been stopped and player destroyed!**');
+            break;
+        case 'pauseTrack':
+            if (player.paused) {
+                await sendEmbed(channel, '⏸️ **Playback is already paused!**');
+            } else {
+                player.pause(true);
+                await sendEmbed(channel, '⏸️ **Playback has been paused!**');
+            }
+            break;
+        case 'resumeTrack':
+            if (!player.paused) {
+                await sendEmbed(channel, '▶️ **Playback is already resumed!**');
+            } else {
+                player.pause(false);
+                await sendEmbed(channel, '▶️ **Playback has been resumed!**');
+            }
+            break;
+        case 'volumeUp':
+            adjustVolume(player, channel, 10);
+            break;
+        case 'volumeDown':
+            adjustVolume(player, channel, -10);
+            break;
+    }
+}
+
+async function sendEmbed(channel, message) {
+    const embed = new EmbedBuilder().setColor(config.embedColor).setDescription(message);
+    const sentMessage = await channel.send({ embeds: [embed] });
+    setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
+}
+
+function adjustVolume(player, channel, amount) {
+    const newVolume = Math.min(100, Math.max(10, player.volume + amount));
+    if (newVolume === player.volume) {
+        sendEmbed(channel, amount > 0 ? '🔊 **Volume is already at maximum!**' : '🔉 **Volume is already at minimum!**');
+    } else {
+        player.setVolume(newVolume);
+        sendEmbed(channel, `🔊 **Volume changed to ${newVolume}%!**`);
+    }
+}
+function formatTrack(track) {
+    if (!track || typeof track !== 'string') return track;
+    
+ 
+    const match = track.match(/\[(.*?) - (.*?)\]\((.*?)\)/);
+    if (match) {
+        const [, title, author, uri] = match;
+        return `[${title} - ${author}](${uri})`;
+    }
+    
+  
+    return track;
+}
+
+
+function toggleLoop(player, channel) {
+    player.setLoop(player.loop === "track" ? "queue" : "track");
+    sendEmbed(channel, player.loop === "track" ? "🔁 **Track loop is activated!**" : "🔁 **Queue loop is activated!**");
+}
+
+function disableLoop(player, channel) {
+    player.setLoop("none");
+    sendEmbed(channel, "❌ **Loop is disabled!**");
+}
+
+function showQueue(channel) {
+    if (queueNames.length === 0) {
+        sendEmbed(channel, "The queue is empty.");
+        return;
+    }
+
+    const nowPlaying = `🎵 **Now Playing:**\n${formatTrack(queueNames[0])}`;
+    const queueChunks = [];
+
+    // Split the queue into chunks of 10 songs per embed
+    for (let i = 1; i < queueNames.length; i += 10) {
+        const chunk = queueNames.slice(i, i + 10)
+            .map((song, index) => `${i + index}. ${formatTrack(song)}`)
+            .join('\n');
+        queueChunks.push(chunk);
+    }
+
+    // Send the "Now Playing" message first
+    channel.send({
+        embeds: [new EmbedBuilder().setColor(config.embedColor).setDescription(nowPlaying)]
+    }).catch(console.error);
+
+    // Send each chunk as a separate embed
+    queueChunks.forEach(async (chunk) => {
+        const embed = new EmbedBuilder()
             .setColor(config.embedColor)
-            .setTitle("❌ **반복 재생이 취소됐어요!**");
-        const sentMessage = await channel.send({ embeds: [loopEmbed] });
-        setTimeout(() => sentMessage.delete().catch(console.error), config.embedTimeout * 1000);
-    }
+            .setDescription(`📜 **Queue:**\n${chunk}`);
+        await channel.send({ embeds: [embed] }).catch(console.error);
+    });
+}
 
-    function setLoop(player, loopType) {
-        if (loopType === "track") {
-            player.setLoop("track");
-        } else if (loopType === "queue") {
-            player.setLoop("queue");
-        } else {
-            player.setLoop("none");
-        }
-    }
 
-    function clearQueue(player) {
-        player.queue.clear();
-        queueNames.length = 0;
-    }
+function createActionRow1(disabled) {
+    return new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder().setCustomId("loopToggle").setEmoji('🔁').setStyle(ButtonStyle.Secondary).setDisabled(disabled),
+            new ButtonBuilder().setCustomId("disableLoop").setEmoji('❌').setStyle(ButtonStyle.Secondary).setDisabled(disabled),
+            new ButtonBuilder().setCustomId("skipTrack").setEmoji('⏭️').setStyle(ButtonStyle.Secondary).setDisabled(disabled),
+            new ButtonBuilder().setCustomId("showQueue").setEmoji('📜').setStyle(ButtonStyle.Secondary).setDisabled(disabled),
+            new ButtonBuilder().setCustomId("clearQueue").setEmoji('🗑️').setStyle(ButtonStyle.Secondary).setDisabled(disabled)
+        );
+}
 
-    function formatTrack(track) {
-        const match = track.match(/\[(.*?) - (.*?)\]\((.*?)\)/);
-        if (match) {
-            const [, title, author, uri] = match;
-            return `[${title} - ${author}](${uri})`;
-        }
-        return track;
-    }
-
-    function createActionRow1(disabled) {
-        return new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId("loopToggle")
-                    .setEmoji('🔁')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled),
-                new ButtonBuilder()
-                    .setCustomId("disableLoop")
-                    .setEmoji('❌')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled),
-                new ButtonBuilder()
-                    .setCustomId("skipTrack")
-                    .setEmoji('⏭️')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled),
-                new ButtonBuilder()
-                    .setCustomId("showQueue")
-                    .setEmoji('📜')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled),
-                new ButtonBuilder()
-                    .setCustomId("clearQueue")
-                    .setEmoji('🗑️')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled)
-            );
-    }
-
-    function createActionRow2(disabled) {
-        return new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId("stopTrack")
-                    .setEmoji('⏹️')
-                    .setStyle(ButtonStyle.Danger)
-                    .setDisabled(disabled),
-                new ButtonBuilder()
-                    .setCustomId("pauseTrack")
-                    .setEmoji('⏸️')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled),
-                new ButtonBuilder()
-                    .setCustomId("resumeTrack")
-                    .setEmoji('▶️')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled),
-                new ButtonBuilder()
-                    .setCustomId("volumeUp")
-                    .setEmoji('🔊')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled),
-                new ButtonBuilder()
-                    .setCustomId("volumeDown")
-                    .setEmoji('🔉')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(disabled)
-            );
-    }
-
-    module.exports = { initializePlayer, setLoop, clearQueue, formatTrack };
+function createActionRow2(disabled) {
+    return new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder().setCustomId("stopTrack").setEmoji('⏹️').setStyle(ButtonStyle.Danger).setDisabled(disabled),
+            new ButtonBuilder().setCustomId("pauseTrack").setEmoji('⏸️').setStyle(ButtonStyle.Secondary).setDisabled(disabled),
+            new ButtonBuilder().setCustomId("resumeTrack").setEmoji('▶️').setStyle(ButtonStyle.Secondary).setDisabled(disabled),
+            new ButtonBuilder().setCustomId("volumeUp").setEmoji('🔊').setStyle(ButtonStyle.Secondary).setDisabled(disabled),
+            new ButtonBuilder().setCustomId("volumeDown").setEmoji('🔉').setStyle(ButtonStyle.Secondary).setDisabled(disabled)
+        );
 }
 
 module.exports = { initializePlayer };
