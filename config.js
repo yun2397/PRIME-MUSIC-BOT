@@ -38,9 +38,9 @@ module.exports = {
 
   nodes: [
     {
-        name: "Node #1",
+        name: "Server",
         host: "lavalink.jirayu.net",
-        port: 2334,
+        port: 13592,
         password: "youshallnotpass",
         reconnectTimeout: 5000,
         reconnectTries: Infinity,
