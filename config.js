@@ -39,15 +39,13 @@ module.exports = {
   nodes: [
     {
         name: "Server",
-        host: "nodev4.fypmoon.org",
-        port: 1118,
-        password: "fypmoon.org",
+        host: "lavalink.jirayu.net",
+        port: 13592,
+        password: "youshallnotpass",
         reconnectTimeout: 5000,
         reconnectTries: Infinity,
         secure: false
     },
- ]
-}
 /*
 
   ________.__                        _____.___.___________
