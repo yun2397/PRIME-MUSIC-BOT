@@ -107,17 +107,49 @@ function initializePlayer(client) {
         currentTrackMessageId = null;
     });
 
-    client.riffy.on("queueEnd", async (player) => {
+const timeouts = new Map(); // 각 플레이어별 타이머를 관리하는 맵
+
+client.riffy.on("trackEnd", async (player) => {
+    if (player.queue.size === 0) { // 대기열에 곡이 없을 때
         const channel = client.channels.cache.get(player.textChannel);
-        if (channel && currentTrackMessageId) {
-            const queueEmbed = new EmbedBuilder()
+
+        if (channel) {
+            const embed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setDescription('**Queue Songs ended! Disconnecting Bot!**');
-            await channel.send({ embeds: [queueEmbed] });
+                .setDescription('**No more songs in queue! Disconnecting in 5 minutes...**');
+            await channel.send({ embeds: [embed] });
         }
-        player.destroy();
-        currentTrackMessageId = null;
-    });
+
+        // 5분 후 자동 퇴장 설정
+        const timeout = setTimeout(() => {
+            if (player.queue.size === 0) { // 여전히 대기열이 비어 있는지 확인
+                if (channel) {
+                    const disconnectEmbed = new EmbedBuilder()
+                        .setColor(config.embedColor)
+                        .setDescription('**No activity detected. Disconnecting bot.**');
+                    channel.send({ embeds: [disconnectEmbed] }).catch(console.error);
+                }
+                player.destroy(); // 플레이어 제거 -> 음성 채널에서 나감
+                timeouts.delete(player.guild); // 타이머 삭제
+            }
+        }, 300000); // 300,000ms = 5분
+
+        // 기존 타이머가 있다면 제거하고 새 타이머를 설정
+        if (timeouts.has(player.guild)) {
+            clearTimeout(timeouts.get(player.guild));
+        }
+        timeouts.set(player.guild, timeout);
+    }
+});
+
+// 새 노래가 시작되면 타이머 초기화
+client.riffy.on("trackStart", async (player) => {
+    if (timeouts.has(player.guild)) {
+        clearTimeout(timeouts.get(player.guild)); // 기존 타이머 제거
+        timeouts.delete(player.guild);
+    }
+});
+
 
     async function disableTrackMessage(client, player) {
         const channel = client.channels.cache.get(player.textChannel);
