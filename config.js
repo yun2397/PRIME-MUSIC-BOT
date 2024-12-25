@@ -31,20 +31,20 @@ module.exports = {
   SupportServer: "https://discord.gg/xQF9f9yUEM",
   CheckmarkIcon: "https://cdn.discordapp.com/emojis/819446784647757834.gif",
   MusicIcon:"https://cdn.discordapp.com/emojis/763415718271385610.gif",
-  embedTimeout: 5,  // Timeout before the button interaction embeds are deleted ( Default - 5 seconds)
+  embedTimeout: 25,  // Timeout before the button interaction embeds are deleted ( Default - 5 seconds)
   errorLog: "", 
 
    // Lavalink Server Details
 
   nodes: [
     {
-        name: "Server",
-        host: "nodev4.fypmoon.org",
-        port: 1118,
-        password: "fypmoon.org",
+        identifier: "INZEWORLD.COM (DE)",
+        host: "lavalink.anantix.network",
+        port: 2335,
+        password: "pg6|(}7fuD_:7d#QQq?9",
         reconnectTimeout: 5000,
         reconnectTries: Infinity,
-        secure: false
+        secure: false 
     },
  ]
 }
