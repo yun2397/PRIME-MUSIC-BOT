@@ -37,32 +37,11 @@ module.exports = {
    // Lavalink Server Details
 
   nodes: [
-    {
-      name: "INZEWORLD.COM (DE)",
-      password: "saher.inzeworld.com",
-      host: "lava.inzeworld.com",
-      port: 3128,
-      secure: false
-    },
-    {
-      name: "ChalresNaig Node",
-      password: "NAIGLAVA-dash.techbyte.host",
-      host: "lavahatry4.techbyte.host",
-      port: 3000,
-      secure: false
-    },  
-    {
-      name: "Public Lavalink v4 NonSSL",
-      password: "https://dsc.gg/ajidevserver",
-      host: "lava-v4.ajieblogs.eu.org",
-      port: 80,
-      secure: false
-    },
-        {
-      name: "jirayu",
-      password: "youshallnotpass",
-      host: "lavalink.jirayu.net",
-      port: 13592,
+     {
+      name: "XX",
+      password: "enteryourcustompass",
+      host: "180.188.226.76",
+      port:  7019,
       secure: false
     }
   ]
