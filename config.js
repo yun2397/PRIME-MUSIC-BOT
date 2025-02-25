@@ -38,11 +38,18 @@ module.exports = {
 
   nodes: [
      {
-      name: "XX",
-      password: "enteryourcustompass",
-      host: "180.188.226.76",
-      port:  7019,
-      secure: false
+  "identifier": "ChalresNaig Node",
+  "password": "NAIGLAVA-dash.techbyte.host",
+  "host": "lavahatry4.techbyte.host",
+  "port": 3000,
+  "secure": false
+              },
+    {
+  "name": "ChalresNaig Node",
+  "password": "NAIGLAVA-dash.techbyte.host",
+  "host": "lavahatry4.techbyte.host",
+  "port": 3000,
+  "secure": false
     }
   ]
 }
