@@ -38,15 +38,35 @@ module.exports = {
 
   nodes: [
     {
-  "identifier": "Koi Node V4",
-  "password": "prplmoe.me",
-  "host": "lavav4.prplmoe.me",
-  "port": 1118,
-  "secure": false
+      name: "INZEWORLD.COM (DE)",
+      password: "saher.inzeworld.com",
+      host: "lava.inzeworld.com",
+      port: 3128,
+      secure: false
     },
- ]
+    {
+      name: "ChalresNaig Node",
+      password: "NAIGLAVA-dash.techbyte.host",
+      host: "lavahatry4.techbyte.host",
+      port: 3000,
+      secure: false
+    },  
+    {
+      name: "Public Lavalink v4 NonSSL",
+      password: "https://dsc.gg/ajidevserver",
+      host: "lava-v4.ajieblogs.eu.org",
+      port: 80,
+      secure: false
+    },
+        {
+      name: "jirayu",
+      password: "youshallnotpass",
+      host: "lavalink.jirayu.net",
+      port: 13592,
+      secure: false
+    }
+  ]
 }
-/*
 
   ________.__                        _____.___.___________
  /  _____/|  | _____    ____  ____   \__  |   |\__    ___/
