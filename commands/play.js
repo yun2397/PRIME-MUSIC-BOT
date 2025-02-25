@@ -1,56 +1,43 @@
-/*
-
-  ________.__                        _____.___.___________
- /  _____/|  | _____    ____  ____   \__  |   |\__    ___/
-/   \  ___|  | \__  \ _/ ___\/ __ \   /   |   |  |    |   
-\    \_\  \  |__/ __ \\  \__\  ___/   \____   |  |    |   
- \______  /____(____  /\___  >___  >  / ______|  |____|   
-        \/          \/     \/    \/   \/                  
-
-╔════════════════════════════════════════════════════════════════════════╗
-║                                                                        ║
-║  ## Created by GlaceYT!                                                ║
-║  ## Feel free to utilize any portion of the code                       ║
-║  ## DISCORD :  https://discord.com/invite/xQF9f9yUEM                   ║
-║  ## YouTube : https://www.youtube.com/@GlaceYt                         ║
-║                                                                        ║
-╚════════════════════════════════════════════════════════════════════════╝
-
-
-*/
-
 const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
-const config = require("../config.js");
-
+const config = require('../config.js');
+const musicIcons = require('../UI/icons/musicicons.js');
 const queueNames = [];
 const requesters = new Map();
 
-async function play(client, interaction) {
+async function play(client, interaction, lang) {
     try {
         const query = interaction.options.getString('name');
 
         if (!interaction.member.voice.channelId) {
             const embed = new EmbedBuilder()
                 .setColor('#ff0000')
-                .setTitle('Voice Channel Required')
-                .setDescription('❌ You need to be in a voice channel to use this command.');
+                .setAuthor({ 
+                    name: lang.play.embed.error, 
+                    iconURL: musicIcons.alertIcon,
+                    url: config.SupportServer
+                })
+                .setFooter({ text: lang.footer, iconURL: musicIcons.heartIcon })
+                .setDescription(lang.play.embed.noVoiceChannel);
 
             await interaction.reply({ embeds: [embed], ephemeral: true });
             return;
         }
 
-        // Check if Lavalink nodes are available
         if (!client.riffy.nodes || client.riffy.nodes.size === 0) {
             const embed = new EmbedBuilder()
                 .setColor('#ff0000')
-                .setTitle('No Lavalink Nodes')
-                .setDescription('❌ No available Lavalink nodes to process the request.');
+                .setAuthor({ 
+                    name: lang.play.embed.error,
+                    iconURL: musicIcons.alertIcon,
+                    url: config.SupportServer
+                })
+                .setFooter({ text: lang.footer, iconURL: musicIcons.heartIcon })
+                .setDescription(lang.play.embed.noLavalinkNodes);
 
             await interaction.reply({ embeds: [embed], ephemeral: true });
             return;
         }
 
-        // Create the player connection
         const player = client.riffy.createConnection({
             guildId: interaction.guildId,
             voiceChannel: interaction.member.voice.channelId,
@@ -59,8 +46,6 @@ async function play(client, interaction) {
         });
 
         await interaction.deferReply();
-
-              player.setVolume(20);
 
         const resolve = await client.riffy.resolve({ query: query, requester: interaction.user.username });
         if (!resolve || typeof resolve !== 'object') {
@@ -95,8 +80,13 @@ async function play(client, interaction) {
         } else {
             const errorEmbed = new EmbedBuilder()
                 .setColor(config.embedColor)
-                .setTitle('Error')
-                .setDescription('❌ No results found.');
+                .setAuthor({ 
+                    name: lang.play.embed.error,
+                    iconURL: musicIcons.alertIcon,
+                    url: config.SupportServer
+                })
+                .setFooter({ text: lang.footer, iconURL: musicIcons.heartIcon })
+                .setDescription(lang.play.embed.noResults);
 
             await interaction.editReply({ embeds: [errorEmbed] });
             return;
@@ -105,12 +95,12 @@ async function play(client, interaction) {
         const randomEmbed = new EmbedBuilder()
             .setColor(config.embedColor)
             .setAuthor({
-                name: 'Request Update',
-                iconURL: config.CheckmarkIcon,
+                name: lang.play.embed.requestUpdated,
+                iconURL: musicIcons.beats2Icon,
                 url: config.SupportServer
             })
-            .setDescription('**➡️ Your request has been successfully processed.**\n**➡️ Please use buttons to control playback**')
-            .setFooter({ text: '🎶 Enjoy your music!' });
+            .setDescription(lang.play.embed.successProcessed)
+            .setFooter({ text: lang.footer, iconURL: musicIcons.heartIcon });
 
         await interaction.followUp({ embeds: [randomEmbed] });
 
@@ -118,8 +108,13 @@ async function play(client, interaction) {
         console.error('Error processing play command:', error);
         const errorEmbed = new EmbedBuilder()
             .setColor('#ff0000')
-            .setTitle('Error')
-            .setDescription('❌ An error occurred while processing your request.');
+            .setAuthor({ 
+                name: lang.play.embed.error,
+                iconURL: musicIcons.alertIcon,
+                url: config.SupportServer
+            })
+            .setFooter({ text: lang.footer, iconURL: musicIcons.heartIcon })
+            .setDescription(lang.play.embed.errorProcessing);
 
         if (interaction.deferred || interaction.replied) {
             await interaction.editReply({ embeds: [errorEmbed] });
@@ -143,24 +138,3 @@ module.exports = {
     queueNames: queueNames,
     requesters: requesters
 };
-
-/*
-
-  ________.__                        _____.___.___________
- /  _____/|  | _____    ____  ____   \__  |   |\__    ___/
-/   \  ___|  | \__  \ _/ ___\/ __ \   /   |   |  |    |   
-\    \_\  \  |__/ __ \\  \__\  ___/   \____   |  |    |   
- \______  /____(____  /\___  >___  >  / ______|  |____|   
-        \/          \/     \/    \/   \/                  
-
-╔════════════════════════════════════════════════════════════════════════╗
-║                                                                        ║
-║  ## Created by GlaceYT!                                                ║
-║  ## Feel free to utilize any portion of the code                       ║
-║  ## DISCORD :  https://discord.com/invite/xQF9f9yUEM                   ║
-║  ## YouTube : https://www.youtube.com/@GlaceYt                         ║
-║                                                                        ║
-╚════════════════════════════════════════════════════════════════════════╝
-
-
-*/
