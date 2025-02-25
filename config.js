@@ -38,13 +38,11 @@ module.exports = {
 
   nodes: [
     {
-        identifier: "INZEWORLD.COM (DE)",
-        host: "lavalink.anantix.network",
-        port: 2335,
-        password: "pg6|(}7fuD_:7d#QQq?9",
-        reconnectTimeout: 5000,
-        reconnectTries: Infinity,
-        secure: false 
+  "identifier": "Koi Node V4",
+  "password": "prplmoe.me",
+  "host": "lavav4.prplmoe.me",
+  "port": 1118,
+  "secure": false
     },
  ]
 }
