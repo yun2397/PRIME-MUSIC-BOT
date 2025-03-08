@@ -16,12 +16,12 @@ module.exports = {
   embedTimeout: 5, 
   errorLog: "", 
   nodes: [
-     {
-      name: "XX",
-      password: "enteryourcustompass",
-      host: "180.188.226.76",
-      port:  7019,
-      secure: false
-    }
+{
+  "identifier": "INZEWORLD.COM (DE)",
+  "password": "saher.inzeworld.com",
+  "host": "lava.inzeworld.com",
+  "port": 3128,
+  "secure": false
+}
   ]
 }
