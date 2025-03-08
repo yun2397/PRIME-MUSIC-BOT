@@ -37,13 +37,20 @@ module.exports = {
    // Lavalink Server Details
 
   nodes: [
-     {
-      name: "XX",
-      password: "enteryourcustompass",
-      host: "180.188.226.76",
-      port:  7019,
-      secure: false
-    }
+    {
+  "identifier": "Public Lavalink v4 NonSSL",
+  "password": "https://dsc.gg/ajidevserver",
+  "host": "lava-v4.ajieblogs.eu.org",
+  "port": 80,
+  "secure": false
+                        },
+   {
+  "name": "Public Lavalink v4 NonSSL",
+  "password": "https://dsc.gg/ajidevserver",
+  "host": "lava-v4.ajieblogs.eu.org",
+  "port": 80,
+  "secure": false
+                        }
   ]
 }
 
